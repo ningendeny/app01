@@ -1,464 +1,363 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>匿名質問＆回答箱</title>
-<style>
-  :root {
-    --bg-color: #0f172a;
-    --card-bg: #1e293b;
-    --accent: #f43f5e;
-    --accent-hover: #e11d48;
-    --secondary: #475569;
-    --secondary-hover: #334155;
-    --text: #f8fafc;
-    --text-muted: #94a3b8;
-  }
-  body {
-    background-color: var(--bg-color);
-    color: var(--text);
-    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-    text-align: center;
-    margin: 0;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第20話：管理者の眼と、明日のITアーキテクト</title>
+    <style>
+
+body{
+    max-width:950px;
+    margin:auto;
+    background:#f5f7fa;
+    font-family:"Yu Gothic","Meiryo",sans-serif;
+    line-height:2;
+    color:#333;
+    padding:20px;
+}
+
+a{
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+.back{
+    margin-bottom:20px;
+}
+
+.scene{
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    margin-bottom:40px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+.scene h2{
+    color:#0d2342;
+    border-left:8px solid #2563eb;
+    padding-left:15px;
+    margin-bottom:25px;
+}
+
+.narration{
+    background:#f7f7f7;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    line-height:2.2;
+}
+
+.talk{
+    display:flex;
+    margin-bottom:20px;
+}
+
+.name{
+    width:100px;
+    font-weight:bold;
+    font-size:1.05rem;
+}
+
+.message{
+    flex:1;
+    padding:16px 20px;
+    border-radius:15px;
+}
+
+.mizudai-name{
+    color:#d62828;
+}
+
+.aoki-name{
+    color:#2563eb;
+}
+
+.hoshino-name{
+    color:#2f855a;
+}
+
+.yamamoto-name{
+    color:#805ad5;
+}
+
+.mizudai-msg{
+    background:#ffeaea;
+}
+
+.aoki-msg{
+    background:#edf5ff;
+}
+
+.hoshino-msg{
+    background:#eaf8ef;
+}
+
+.yamamoto-msg{
+    background:#faf5ff;
+    border:1px solid #d6bcfa;
+}
+
+.question-box {
+    border: 2px dashed #2563eb;
     padding: 20px;
+    border-radius: 15px;
+    background: #f8fafc;
+    margin-bottom: 20px;
+}
+.quiz-option {
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.episode-nav {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-  }
-  h1 { font-size: 1.5rem; margin-bottom: 10px; color: #fff; }
-  .container {
-    background-color: var(--card-bg);
-    border-radius: 16px;
-    padding: 30px 20px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    box-sizing: border-box;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-  }
-  .hidden { display: none !important; }
-  
-  .scroll-area {
-    overflow-y: auto;
-    margin-bottom: 20px;
-    padding-right: 5px;
-  }
-  .scroll-area::-webkit-scrollbar { width: 6px; }
-  .scroll-area::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 3px; }
-
-  textarea {
-    width: 100%;
-    background-color: #0f172a;
-    color: #fff;
-    border: 2px solid #334155;
-    border-radius: 12px;
-    padding: 15px;
-    font-size: 16px;
-    box-sizing: border-box;
-    resize: none;
-    transition: border-color 0.3s, background-color 0.3s;
-  }
-  textarea:focus { outline: none; border-color: var(--accent); }
-  
-  textarea.locked {
-    background-color: #1e293b;
-    border-color: var(--accent);
-    color: #f43f5e;
+    margin-bottom: 30px;
+}
+.episode-nav.bottom {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+.nav-btn {
+    display: inline-block;
+    background: #2563eb;
+    color: white !important;
+    padding: 12px 24px;
+    border-radius: 10px;
     font-weight: bold;
-  }
-  
-  .main-textarea { height: 120px; margin-bottom: 25px; }
-
-  input[type="number"] {
-    background-color: #0f172a;
-    color: #fff;
-    border: 2px solid #334155;
-    font-size: 24px;
+    transition: background 0.2s;
     text-align: center;
-    width: 120px;
-    padding: 15px;
-    margin-bottom: 25px;
-    border-radius: 12px;
-  }
-  
-  button {
-    background-color: var(--accent);
-    color: white;
-    border: none;
-    padding: 16px 30px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 30px;
-    cursor: pointer;
-    width: 100%;
-    transition: transform 0.1s, background-color 0.2s, opacity 0.3s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    flex-shrink: 0;
-  }
-  button:active { transform: scale(0.96); background-color: var(--accent-hover); }
-
-  .btn-gacha {
-    background-color: var(--secondary);
-    font-size: 15px;
-    padding: 12px 20px;
-    margin-bottom: 15px;
-    box-shadow: none;
-  }
-  .btn-gacha:active { background-color: var(--secondary-hover); }
-  .btn-gacha:disabled {
-    background-color: #334155;
-    color: #94a3b8;
+    text-decoration: none;
+    min-width: 140px;
+}
+.nav-btn:hover {
+    background: #1d4ed8;
+    text-decoration: none;
+}
+.nav-btn.home-btn {
+    background: #4b5563;
+}
+.nav-btn.home-btn:hover {
+    background: #374151;
+}
+.nav-btn.disabled {
+    background: #d1d5db;
+    color: #9ca3af !important;
     cursor: not-allowed;
-    transform: none;
-  }
-  
-  .status { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
-  
-  .q-block {
-    text-align: left;
-    margin-bottom: 20px;
-    background: #334155;
-    padding: 15px;
-    border-radius: 12px;
-  }
-  .q-block p { margin-top: 0; font-weight: bold; color: var(--accent); margin-bottom: 10px; line-height: 1.4; }
-  .q-block textarea { height: 80px; }
+    pointer-events: none;
+}
 
-  .reveal-q {
-    font-size: 1.3rem;
-    font-weight: bold;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    color: var(--accent);
-    text-align: left;
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 10px;
-  }
-  .ans-list { text-align: left; width: 100%; margin-bottom: 20px; }
-  .ans-item {
-    background: #334155;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    border-left: 4px solid var(--accent);
-    line-height: 1.5;
-    word-break: break-all;
-  }
+@media (max-width:768px){
+    body{
+        padding:10px;
+        line-height:1.8;
+    }
+    .scene{
+        padding:20px;
+        border-radius:15px;
+    }
+    .name{
+        width:80px;
+        font-size:0.95rem;
+    }
+    .message{
+        padding:14px;
+        font-size:0.95rem;
+    }
+    .narration{
+        padding:15px;
+        line-height:2;
+    }
+    .question-box{
+        padding:15px;
+    }
+    .quiz-option{
+        margin-left:0;
+        display:block;
+        margin-top:8px;
+    }
+    .episode-nav {
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    .episode-nav.bottom {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+    .nav-btn {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+        flex: 1;
+        min-width: 0;
+    }
+}
+
 </style>
 </head>
 <body>
 
-<div class="container" id="screen-setup">
-  <h1>💣 匿名質問＆回答箱</h1>
-  <p class="status">飲み会の参加人数を入力してください</p>
-  <input type="number" id="player-count" value="3" min="2" max="10">
-  <button onclick="startGame()">ゲームを始める</button>
+<nav class="episode-nav top">
+    <a class="nav-btn" href="ep19.html">← 第19話へ</a>
+    <a class="nav-btn home-btn" href="../index.html">🏠 ホーム</a>
+    <a class="nav-btn disabled" href="#">第21話へ →</a>
+</nav>
+
+<div class="scene">
+    <h2>プロローグ：プロジェクトの管理とクリティカルパス</h2>
+    <div class="narration">
+        ロードマップ最終段階「マネジメント編」がスタート。<br>
+        新システムの開発プロジェクトも佳境に入り、アオキはスケジュール管理とリリース後の運用ルール作りに取り組んでいた。
+    </div>
+
+    <div class="talk">
+        <div class="name aoki-name">アオキ</div>
+        <div class="message aoki-msg">「複数のタスクが同時並行で動いていて、全体のスケジュールがいつ終わるのか、どの作業が遅れるとマズいのか整理しきれません……」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name hoshino-name">ホシノ</div>
+        <div class="message hoshino-msg">「そういう時は、まず作業を細かく分解した構成図 **WBS**（Work Breakdown Structure）を作り、それを時系列に並べた **ガントチャート** で可視化します。そして、プロジェクトの開始から終了までをつなぐ最長の経路である **クリティカルパス** を割り出すのです」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name yamamoto-name">ヤマモト</div>
+        <div class="message yamamoto-msg">「フン、アオキ。クリティカルパス上のタスクが1日でも遅れれば、プロジェクト全体の完了日も1日遅れる。つまり、最も遅延が許されない『生命線』だ。これ以外のパスには多少の遅延のゆとり（フロート）があるが、ここだけは監視を怠るな」</div>
+    </div>
 </div>
 
-<div class="container hidden" id="screen-q-input">
-  <h1 id="q-player-text">1人目の質問作成</h1>
-  <p class="status">全員に答えさせたい質問を入力してね！</p>
-  
-  <button id="gacha-btn" class="btn-gacha" onclick="drawGacha()">🎲 お題ガチャを回す（残り3回）</button>
-  
-  <textarea id="question-input" class="main-textarea" placeholder="自分で入力するか、上のガチャを回してね！"></textarea>
-  <button onclick="nextQPlayer()">質問を保存・次へ</button>
+<div class="scene">
+    <h2>稼働後の運用とインシデント管理</h2>
+    <div class="talk">
+        <div class="name aoki-name">アオキ</div>
+        <div class="message aoki-msg">「なんとかシステムを無事にリリースできました！ でも、リリースした後にトラブルが起きたときは、どう対応すればいいですか？」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name hoshino-name">ホシノ</div>
+        <div class="message hoshino-msg">「システムを安定稼働させるための運用管理も重要です。ユーザーに提供するサービス品質を事前に合意しておく **SLA（サービスレベル合意書）** を結び、障害が発生した際は迅速に対応します」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name yamamoto-name">ヤマモト</div>
+        <div class="message yamamoto-msg">「障害対応では、まずサービスの一時復旧（暫定対応）を最優先する **インシデント管理** を行う。その後、障害の根本原因を特定して再発を防ぐ **問題管理** に引き継ぐんだ。アオキ、この2つの違いを混同するなよ」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name mizudai-name">ミズダイ</div>
+        <div class="message mizudai-msg">「うむ！ 筋肉のインシデント管理だな！<br>
+        トレーニング中にダンベルを落として足を痛めた（インシデント）とき、まずコールドスプレーで応急処置して立ち上がらせる（インシデント管理＝暫定復旧）！<br>
+        その後、なぜダンベルを落としたのか『握力不足か？シャフトのサビか？』と原因を究明して器具を交換する（問題管理＝根本原因究明）！<br>
+        この連携があってこそ、アスリートの日常（SLA）が守られるのだ！」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name aoki-name">アオキ</div>
+        <div class="message aoki-msg">「怪我を暫定復旧って言うのはちょっと怖いですけど、応急処置（インシデント管理）と根本治療（問題管理）の違いはよくわかりました！」</div>
+    </div>
 </div>
 
-<div class="container hidden" id="screen-q-pass">
-  <h1>✅ 質問入力完了</h1>
-  <p class="status">次の人にスマホを渡してください。</p>
-  <button onclick="showQInput()">受け取りました</button>
+<div class="scene">
+    <h2>午前問題（科目A）にチャレンジ！</h2>
+    <div class="narration">
+        プロジェクト管理とサービス運用のルールを理解したアオキ。<br>
+        ホシノさんがホワイトボードに、マネジメントの午前過去問を書き出した！
+    </div>
+
+    <div class="question-box">
+        <strong>【問題1】</strong><br>
+        プロジェクト管理において、作業全体のスケジュールを決める最長の作業経路であり、その経路上のタスクの遅延がプロジェクト全体の遅延に直結するものを何と呼ぶか。<br><br>
+        <span class="quiz-option">ア：クリティカルパス</span><br>
+        <span class="quiz-option">イ：マイルストーン</span><br>
+        <span class="quiz-option">ウ：WBS</span><br>
+        <span class="quiz-option">エ：ガントチャート</span>
+    </div>
+
+    <div class="talk">
+        <div class="name aoki-name">アオキ</div>
+        <div class="message aoki-msg">「全体の遅れに直結する最長のルートだから、正解は **『アのクリティカルパス』** です！」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name hoshino-name">ホシノ</div>
+        <div class="message hoshino-msg">「大正解です！ ちなみにマイルストーンはプロジェクトの節目となる重要ポイントです」</div>
+    </div>
+
+    <div class="question-box">
+        <strong>【問題2】</strong><br>
+        ITIL（ITサービス管理のベストプラクティス）において、発生したサービスの中断に対して、一時的な回避策（ワークアラウンド）の適用などを行い、迅速に通常のサービスレベルを回復させることを主な目的とするプロセスはどれか。<br><br>
+        <span class="quiz-option">ア：問題管理</span><br>
+        <span class="quiz-option">イ：インシデント管理</span><br>
+        <span class="quiz-option">ウ：変更管理</span><br>
+        <span class="quiz-option">エ：リリース管理</span>
+    </div>
+
+    <div class="talk">
+        <div class="name yamamoto-name">ヤマモト</div>
+        <div class="message yamamoto-msg">「アオキ、これが分からないならお前という障害に対するワークアラウンドとして、永久にこのオフィスから『排除（隔離）』してやる。答えろ」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name aoki-name">アオキ</div>
+        <div class="message aoki-msg">「私を隔離しないでください！ 迅速な回復・応急処置が目的だから、正解は **『イのインシデント管理』** です！」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name hoshino-name">ホシノ</div>
+        <div class="message hoshino-msg">「素晴らしい、大正解です！ 根本原因を突き止めるのは『問題管理』になります」</div>
+    </div>
 </div>
 
-<div class="container hidden" id="screen-a-ready">
-  <h1>📝 質問が出揃いました！</h1>
-  <p class="status">ここからは「回答フェーズ」です。<br>集まった全ての質問に、各自回答を入力して回します。</p>
-  <button onclick="startAnswerPhase()">回答を始める</button>
+<div class="scene">
+    <h2>エピローグ：明日のITアーキテクトへ</h2>
+    <div class="narration">
+        ついに、全てのロードマップを走りきったアオキ。<br>
+        試験を翌日に控えた夕方、情シス部の一角で、ヤマモトが最後のリコメンドをアオキに差し出した。
+    </div>
+
+    <div class="talk">
+        <div class="name yamamoto-name">ヤマモト</div>
+        <div class="message yamamoto-msg">「フン……アオキ。これを飲んでおけ。明日のお前の脳内CPUの動作クロックを最大化するアミノ酸を配合してある。……（ごくごく）チッ、相変わらずこのスムージーだけは最高だな。合格できなければ、このレシピを完全に削除（DELETE）するからな」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name aoki-name">アオキ</div>
+        <div class="message aoki-msg">「ありがとうございます、ヤマモトさん！ レシピを守るためにも、絶対に合格します！」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name hoshino-name">ホシノ</div>
+        <div class="message hoshino-msg">「アオキさん、これまでコンピュータの仕組みからネットワーク、セキュリティ、そしてOSやマネジメントまで、本当によく頑張りましたね。今のあなたなら、自信を持って試験に臨めます。落ち着いていってらっしゃい！」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name mizudai-name">ミズダイ</div>
+        <div class="message mizudai-msg">「ガハハ！ 私たちの情シス部の日常で培った『ITマッスル』は本物だ！ 試験問題など、お前の鍛え上げた論理力で一瞬にして粉砕してくれるわ！ 恐れるなアオキ、力強く突き進め！」</div>
+    </div>
+
+    <div class="talk">
+        <div class="name aoki-name">アオキ</div>
+        <div class="message aoki-msg">「はい！ 課長、ホシノさん、ヤマモトさん……本当にありがとうございました！ 私たちのオフィスの平和を守る情シス部のプロフェッショナルとして、明日の試験、全力で突破してきます！」</div>
+    </div>
+
+    <div class="narration">
+        ITの基礎知識から始まったアオキの成長の旅。<br>
+        情シス部が守るネットワークとセキュリティの城壁を背に、彼女は自信をみなぎらせて、明日の新しいステージ（試験会場）へと力強く歩み出す！<br>
+        （第8段階：マネジメント編・本編 完）
+    </div>
 </div>
 
-<div class="container hidden" id="screen-a-input">
-  <h1 id="a-player-text">1人目の回答</h1>
-  <p class="status">質問に対するあなたの回答を入力してね！</p>
-  <div class="scroll-area" id="answer-forms"></div>
-  <button onclick="nextAPlayer()">回答を保存・次へ</button>
-</div>
+<footer class="episode-nav bottom">
+    <a class="nav-btn" href="ep19.html">← 第19話へ</a>
+    <a class="nav-btn home-btn" href="../index.html">🏠 ホーム</a>
+    <a class="nav-btn disabled" href="#">第21話へ →</a>
+</footer>
 
-<div class="container hidden" id="screen-a-pass">
-  <h1>✅ 回答完了</h1>
-  <p class="status">次の人にスマホを渡してください。</p>
-  <button onclick="showAInput()">受け取りました</button>
-</div>
-
-<div class="container hidden" id="screen-reveal-ready">
-  <h1>🎉 全員の回答が完了！</h1>
-  <p class="status">スマホをテーブルの真ん中に置いてください<br>いよいよ結果発表です。</p>
-  <button onclick="startReveal()">結果を見る</button>
-</div>
-
-<div class="container hidden" id="screen-reveal">
-  <p class="status" id="reveal-progress">結果 1 / 3</p>
-  <div class="scroll-area">
-    <div class="reveal-q" id="reveal-q-text">Q: ここに質問</div>
-    <div class="ans-list" id="reveal-a-list"></div>
-  </div>
-  <button id="next-reveal-btn" onclick="nextReveal()">次の結果へ</button>
-</div>
-
-<script>
-  let totalPlayers = 3;
-  let currentQPlayer = 1;
-  let currentAPlayer = 1;
-  let questions = [];
-  let shuffledQuestions = [];
-  let answers = []; 
-  let currentRevealIndex = 0;
-  let gachaCount = 0;
-
-  // ガチャリスト（変数を let に変更して中身を削除できるようにしています）
-  let gachaList = [
-    "このあと、このメンバーで2軒目行きたい？",
-    "このメンバーでまた遊びたいと思う？",
-    "初体験はいつ？",
-    "今まで付き合った人数は？",
-    "告白した回数は？",
-    "告白された回数は？",
-    "一番長く付き合った期間は？",
-    "一番短く付き合った期間は？",
-    "元カレ・元カノと友達に戻れる派？",
-    "浮気されたことある？",
-    "浮気したことある？",
-    "ナンパされたことある？",
-    "この中で恋人にするなら誰？",
-    "キスした人数は？",
-    "酔った勢いで失敗したことは？",
-    "学生時代のあだ名は？",
-    "親に絶対言えない秘密は？",
-    "スマホの検索履歴、一番見られたくないのは？",
-    "今までで一番高い買い物は？",
-    "人に言えない性癖は？",
-    "今まで一番恥ずかしかった出来事は？",
-    "もし100万円もらえるなら何をする？",
-    "異性のどんな仕草に弱い？",
-    "「この人モテるな」と思う特徴は？",
-    "一番天然なのは誰？",
-    "一番腹黒そうなのは誰？",
-    "一番リーダー向きなのは誰？",
-    "一番お金持ちになりそうなのは誰？",
-    "一番長生きしそうなのは誰？",
-    "一番人生を楽しんでそうなのは誰？",
-    "一番運が強そうなのは誰？",
-    "一番メンタルが強そうなのは誰？",
-    "一番ギャップがある人は誰？",
-    "一番モテそうなのは誰？",
-    "一番告白された回数が多そうなのは誰？",
-    "一番恋愛経験が豊富そうなのは誰？",
-    "一番一途そうなのは誰？",
-    "一番尽くしそうなのは誰？",
-    "宝くじが当たったら一番散財しそうなのは誰？",
-    "ゾンビ世界で最後まで生き残るのは誰？",
-    "自分の一番かわいいところは？",
-    "自分の一番かっこいいところは？",
-    "自分の一番の長所は？",
-    "自分の一番の短所は？",
-    "自分を一言で表すと？",
-    "自分を動物に例えると？",
-    "自分を色で表すと何色？",
-    "自分を漢字一文字で表すと？",
-    "自分のチャームポイントは？",
-    "自分が一番好きな自分の性格は？",
-    "自分の一番モテるポイントは？",
-    "異性を落とせると思う必殺技は？",
-    "自分と付き合うメリットを１つ挙げるなら？",
-    "恋人にするとしたら自分は何点？",
-    "自分を恋人にすると面倒くさいところは？",
-    "自分はS？M？",
-    "自分から告白する派？されたい派？",
-    "この中のメンバーの意外だった一面は？（名指し無し）",
-    "何か面白い一言を。"
-  ];
-
-  function $(id) { return document.getElementById(id); }
-
-  function hideAll() {
-    ['screen-setup', 'screen-q-input', 'screen-q-pass', 'screen-a-ready', 
-     'screen-a-input', 'screen-a-pass', 'screen-reveal-ready', 'screen-reveal']
-    .forEach(id => $(id).classList.add('hidden'));
-  }
-
-  function shuffleArray(array) {
-    let arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function startGame() {
-    totalPlayers = parseInt($('player-count').value) || 3;
-    currentQPlayer = 1;
-    questions = [];
-    showQInput();
-  }
-
-  function showQInput() {
-    hideAll();
-    $('q-player-text').innerText = `${currentQPlayer}人目の質問作成`;
-    
-    const inputArea = $('question-input');
-    const gachaBtn = $('gacha-btn');
-    
-    inputArea.value = '';
-    inputArea.readOnly = false;
-    inputArea.classList.remove('locked');
-    
-    gachaCount = 0;
-    
-    // ガチャリストが空っぽになった場合のフェイルセーフ
-    if (gachaList.length === 0) {
-      gachaBtn.innerText = '🚫 お題が空っぽです（自分で考えてね！）';
-      gachaBtn.disabled = true;
-    } else {
-      gachaBtn.disabled = false;
-      gachaBtn.innerText = '🎲 お題ガチャを回す（残り3回）';
-    }
-    
-    $('screen-q-input').classList.remove('hidden');
-  }
-
-  function drawGacha() {
-    if (gachaCount >= 3 || gachaList.length === 0) return;
-
-    const randomIndex = Math.floor(Math.random() * gachaList.length);
-    const inputArea = $('question-input');
-    const gachaBtn = $('gacha-btn');
-
-    inputArea.value = gachaList[randomIndex];
-    gachaCount++;
-
-    if (gachaCount < 3) {
-      gachaBtn.innerText = `🎲 お題ガチャを回す（残り${3 - gachaCount}回）`;
-    } else {
-      gachaBtn.innerText = '🚫 運命の3回目！（変更不可）';
-      gachaBtn.disabled = true;
-      inputArea.readOnly = true;
-      inputArea.classList.add('locked');
-    }
-  }
-
-  function nextQPlayer() {
-    const text = $('question-input').value.trim();
-    if (!text) return alert('質問が入力されていません！');
-    
-    // ★追加: 確定した質問がガチャリスト内にあれば、リストから削除する
-    const indexInGachaList = gachaList.indexOf(text);
-    if (indexInGachaList !== -1) {
-      gachaList.splice(indexInGachaList, 1);
-    }
-    
-    questions.push(text);
-
-    if (currentQPlayer < totalPlayers) {
-      currentQPlayer++;
-      hideAll();
-      $('screen-q-pass').classList.remove('hidden');
-    } else {
-      hideAll();
-      $('screen-a-ready').classList.remove('hidden');
-    }
-  }
-
-  function startAnswerPhase() {
-    shuffledQuestions = shuffleArray(questions);
-    answers = shuffledQuestions.map(() => []);
-    currentAPlayer = 1;
-    showAInput();
-  }
-
-  function showAInput() {
-    hideAll();
-    $('a-player-text').innerText = `${currentAPlayer}人目の回答`;
-    
-    const container = $('answer-forms');
-    container.innerHTML = '';
-    
-    shuffledQuestions.forEach((q, i) => {
-      container.innerHTML += `
-        <div class="q-block">
-          <p>Q${i + 1}: ${q}</p>
-          <textarea id="ans-${i}" placeholder="回答を入力..."></textarea>
-        </div>
-      `;
-    });
-    
-    $('screen-a-input').classList.remove('hidden');
-    container.scrollTop = 0;
-  }
-
-  function nextAPlayer() {
-    let allFilled = true;
-    for (let i = 0; i < shuffledQuestions.length; i++) {
-      if (!$(`ans-${i}`).value.trim()) allFilled = false;
-    }
-    if (!allFilled && !confirm('未入力の回答がありますが、進みますか？')) {
-      return;
-    }
-
-    for (let i = 0; i < shuffledQuestions.length; i++) {
-      const val = $(`ans-${i}`).value.trim() || '（無回答）';
-      answers[i].push(val);
-    }
-
-    if (currentAPlayer < totalPlayers) {
-      currentAPlayer++;
-      hideAll();
-      $('screen-a-pass').classList.remove('hidden');
-    } else {
-      hideAll();
-      $('screen-reveal-ready').classList.remove('hidden');
-    }
-  }
-
-  function startReveal() {
-    currentRevealIndex = 0;
-    hideAll();
-    $('screen-reveal').classList.remove('hidden');
-    showReveal();
-  }
-
-  function showReveal() {
-    $('reveal-progress').innerText = `結果 ${currentRevealIndex + 1} / ${shuffledQuestions.length}`;
-    $('reveal-q-text').innerText = `Q: ${shuffledQuestions[currentRevealIndex]}`;
-    
-    const ansContainer = $('reveal-a-list');
-    ansContainer.innerHTML = '';
-    
-    const shuffledAnswers = shuffleArray(answers[currentRevealIndex]);
-    
-    shuffledAnswers.forEach(ans => {
-      ansContainer.innerHTML += `<div class="ans-item">${ans}</div>`;
-    });
-
-    const btn = $('next-reveal-btn');
-    if (currentRevealIndex === shuffledQuestions.length - 1) {
-      btn.innerText = '最初からやり直す';
-      btn.onclick = () => location.reload();
-    } else {
-      btn.innerText = '次の結果へ';
-      btn.onclick = nextReveal;
-    }
-  }
-
-  function nextReveal() {
-    currentRevealIndex++;
-    showReveal();
-  }
-</script>
 </body>
 </html>
